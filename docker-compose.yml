@@ -1,0 +1,42 @@
+version: '3.8'
+
+networks:
+  rustdesk-net:
+    external: false
+
+services:
+  hbbr:
+    container_name: hbbr
+    image: rustdesk/rustdesk-server
+    command: hbbr
+    ports:
+      - 21117:21117
+    volumes:
+      - ./data:/root
+    networks:
+      - rustdesk-net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+  hbbs:
+    container_name: hbbs
+    image: rustdesk/rustdesk-server
+    command: hbbs
+    ports:
+      - 21115:21115
+      - 21116:21116
+      - 21116:21116/udp
+    volumes:
+      - ./data:/root
+    networks:
+      - rustdesk-net
+    depends_on:
+      - hbbr
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 64M
